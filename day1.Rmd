@@ -1,0 +1,30 @@
+---
+title: "Advent of Code 2022, Day 1"
+author: "Skip Perry"
+date: "December 2022"
+output: github_document
+---
+
+```{r setup, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(dplyr.summarise.inform = FALSE)
+library(tidyverse)
+```
+
+```{r}
+df <- 
+  read_lines("day1a.txt") |> 
+  as_tibble()
+
+df |> 
+  mutate(
+    new = if_else(value > 0, FALSE, TRUE),
+    elf_num = cumsum(new),
+    value = as.integer(value)
+  ) |> 
+  filter(new == FALSE) |> 
+  group_by(elf_num) |> 
+  summarize(value = sum(value)) |> 
+  arrange(desc(value))
+```
+
