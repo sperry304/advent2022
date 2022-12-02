@@ -1,0 +1,91 @@
+Advent of Code 2022, Day 2
+================
+Skip Perry
+December 2022
+
+``` r
+knitr::opts_chunk$set(echo = TRUE)
+options(dplyr.summarise.inform = FALSE)
+library(tidyverse)
+```
+
+``` r
+df <- 
+  read_lines("data/day2a.txt") |> 
+  as_tibble()
+
+df |> 
+  separate(value, into = c("opp", "me"), sep = " ") |> 
+  mutate(
+    opp = case_when(
+      opp == "A" ~ "X",
+      opp == "B" ~ "Y",
+      opp == "C" ~ "Z"
+    ),
+    throw_score = case_when(
+      me == "X" ~ 1L,
+      me == "Y" ~ 2L,
+      me == "Z" ~ 3L
+    ),
+    game_score = case_when(
+      opp == me ~ 3L,
+      opp == "X" & me == "Y" ~ 6L,
+      opp == "Y" & me == "Z" ~ 6L,
+      opp == "Z" & me == "X" ~ 6L,
+      TRUE ~ 0L
+    ),
+    score = throw_score + game_score
+  ) |> 
+  summarize(sum(score))
+```
+
+    ## # A tibble: 1 × 1
+    ##   `sum(score)`
+    ##          <int>
+    ## 1        11767
+
+``` r
+result_df <- 
+  tibble(
+    opp = rep(c("X", "Y", "Z"), 3),
+    me = c("Y", "Z", "X", "Z", "X", "Y", "X", "Y", "Z"),
+    result = c(rep(c("win", "lose"), each = 3), rep("draw", 3))
+  )
+
+df |> 
+  separate(value, into = c("opp", "goal"), sep = " ") |> 
+  mutate(
+    opp = case_when(
+      opp == "A" ~ "X",
+      opp == "B" ~ "Y",
+      opp == "C" ~ "Z"
+    ),
+    result = case_when(
+      goal == "X" ~ "lose",
+      goal == "Y" ~ "draw",
+      goal == "Z" ~ "win"
+    )
+  ) |> 
+  left_join(result_df, by = c("opp", "result")) |> 
+  mutate(
+    throw_score = case_when(
+      me == "X" ~ 1L,
+      me == "Y" ~ 2L,
+      me == "Z" ~ 3L
+    ),
+    game_score = case_when(
+      opp == me ~ 3L,
+      opp == "X" & me == "Y" ~ 6L,
+      opp == "Y" & me == "Z" ~ 6L,
+      opp == "Z" & me == "X" ~ 6L,
+      TRUE ~ 0L
+    ),
+    score = throw_score + game_score
+  ) |> 
+  summarize(sum(score))
+```
+
+    ## # A tibble: 1 × 1
+    ##   `sum(score)`
+    ##          <int>
+    ## 1        13886
