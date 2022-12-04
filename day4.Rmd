@@ -1,0 +1,45 @@
+---
+title: "Advent of Code 2022, Day 3"
+author: "Skip Perry"
+date: "December 2022"
+output: github_document
+---
+
+```{r setup, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(dplyr.summarise.inform = FALSE)
+library(tidyverse)
+```
+
+```{r}
+df <- 
+  read_lines("data/day4a.txt") |> 
+  as_tibble()
+```
+
+```{r}
+df2 <- 
+  df |> 
+  separate(value, into = c("a", "b"), sep = ",") |> 
+  separate(a, into = c("a1", "a2"), sep = "-") |> 
+  separate(b, into = c("b1", "b2"), sep = "-") |> 
+  mutate_all(as.numeric)
+
+df2
+
+df2 |> 
+  filter((a1 >= b1 & a2 <= b2) | (b1 >= a1 & b2 <= a2)) |> 
+  count()
+```
+
+```{r}
+df2 |> 
+  mutate(
+    overlap = mapply(function(w, x, y, z) 
+                     length(intersect(seq(w, x), seq(y, z))),
+                     a1, a2, b1, b2)
+  ) |> 
+  filter(overlap > 0) |> 
+  count()
+```
+
