@@ -1,5 +1,5 @@
 ---
-title: "Advent of Code 2022, Day 3"
+title: "Advent of Code 2022, Day 4"
 author: "Skip Perry"
 date: "December 2022"
 output: github_document

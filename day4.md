@@ -1,4 +1,4 @@
-Advent of Code 2022, Day 3
+Advent of Code 2022, Day 4
 ================
 Skip Perry
 December 2022
