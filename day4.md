@@ -21,7 +21,7 @@ df2 <-
   separate(value, into = c("a", "b"), sep = ",") |> 
   separate(a, into = c("a1", "a2"), sep = "-") |> 
   separate(b, into = c("b1", "b2"), sep = "-") |> 
-  mutate_all(as.numeric)
+  mutate(across(everything(), as.numeric))
 
 df2
 ```
