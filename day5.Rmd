@@ -115,9 +115,3 @@ day5 <- function(lift_process) {
 day5(lift_process = "one by one")
 day5(lift_process = "all at once")
 ```
-
-```{r}
-day5(lift_process = "all at once")
-
-```
-

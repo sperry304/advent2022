@@ -134,9 +134,3 @@ day5(lift_process = "all at once")
 ```
 
     ## [1] "PQTJRSHWS"
-
-``` r
-day5(lift_process = "all at once")
-```
-
-    ## [1] "PQTJRSHWS"
