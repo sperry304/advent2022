@@ -113,13 +113,13 @@ day5 <- function(lift_process) {
     to_pos <- df2$to_pos[i]
   
     if (lift_process == "one by one") {
-      stacks[[to_pos]] <- c(stacks[[to_pos]], rev(stacks[[from_pos]])[1:num])
+      stacks[[to_pos]] <- c(stacks[[to_pos]], rev(tail(stacks[[from_pos]], num)))
     } else {
-      stacks[[to_pos]] <- c(stacks[[to_pos]], rev(rev(stacks[[from_pos]])[1:num]))
+      stacks[[to_pos]] <- c(stacks[[to_pos]], tail(stacks[[from_pos]], num))
     }
-    stacks[[from_pos]] <- stacks[[from_pos]][1:(length(stacks[[from_pos]]) - num)]
+    stacks[[from_pos]] <- head(stacks[[from_pos]], length(stacks[[from_pos]]) - num)
   }
-  return(paste(lapply(stacks, function(x) rev(x)[1]), collapse = ""))
+  return(paste(lapply(stacks, function(x) tail(x, 1)), collapse = ""))
 }
 ```
 
@@ -128,6 +128,12 @@ day5(lift_process = "one by one")
 ```
 
     ## [1] "HBTMTBSDC"
+
+``` r
+day5(lift_process = "all at once")
+```
+
+    ## [1] "PQTJRSHWS"
 
 ``` r
 day5(lift_process = "all at once")
