@@ -68,3 +68,30 @@ day6("part2")
 ```
 
     ## [1] 3986
+
+``` r
+# Better version
+s <- 
+  df |> 
+  pull(value)
+
+day6_v2 <- function(part) {
+  num <- ifelse(part == "part1", 4L, 14L)
+  num_unique <- 0
+
+  for (i in num:(str_length(s) - num)) {
+    num_unique <- length(unique(strsplit(str_sub(s, start = i, end = i + num - 1), "")[[1]]))
+    if (num_unique == num) { return(i + num - 1); break }
+  }
+}
+
+day6_v2("part1")
+```
+
+    ## [1] 1300
+
+``` r
+day6_v2("part2")
+```
+
+    ## [1] 3986
