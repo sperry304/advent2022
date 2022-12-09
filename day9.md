@@ -1,0 +1,101 @@
+Advent of Code 2022, Day 9
+================
+Skip Perry
+December 2022
+
+``` r
+options(dplyr.summarise.inform = FALSE)
+library(tidyverse)
+```
+
+``` r
+df_raw <- 
+  read_lines("data/day9a.txt") |> 
+  as_tibble() |> 
+  separate(value, into = c("dir", "num"), sep = " ")
+
+row_to_string <- function(i) { paste(rep(df_raw$dir[i], df_raw$num[i]), collapse = "") }
+
+directions <- paste(map_chr(1:nrow(df_raw), row_to_string), collapse = "")
+
+df <- 
+  directions |> 
+  str_split(pattern = "") |> 
+  unlist() |> 
+  as_tibble() |> 
+  mutate(r1_x = 0, r1_y = 0, r2_x = 0, r2_y = 0, r3_x = 0, r3_y = 0,
+         r4_x = 0, r4_y = 0, r5_x = 0, r5_y = 0, r6_x = 0, r6_y = 0,
+         r7_x = 0, r7_y = 0, r8_x = 0, r8_y = 0, r9_x = 0, r9_y = 0,
+         r10_x = 0, r10_y = 0)
+
+for (i in 2:nrow(df)) {
+  d <- df[i-1,2:21]
+  move <- df$value[i]
+  
+  if (move == "R") { d$r1_x <- d$r1_x + 1 }
+  else if (move == "L") { d$r1_x <- d$r1_x - 1 }
+  else if (move == "U") { d$r1_y <- d$r1_y + 1 }
+  else if (move == "D") { d$r1_y <- d$r1_y - 1 }
+  
+  if (abs(d$r1_x - d$r2_x) > 1) { d$r2_x <- (d$r1_x + d$r2_x) / 2; d$r2_y <- d$r1_y }
+  if (abs(d$r1_y - d$r2_y) > 1) { d$r2_y <- (d$r1_y + d$r2_y) / 2; d$r2_x <- d$r1_x }
+  if (abs(d$r2_x - d$r3_x) > 1 & abs(d$r2_y - d$r3_y) > 1) { 
+    d$r3_x <- (d$r2_x + d$r3_x) / 2; d$r3_y <- (d$r2_y + d$r3_y) / 2
+  }
+  if (abs(d$r2_x - d$r3_x) > 1) { d$r3_x <- (d$r2_x + d$r3_x) / 2; d$r3_y <- d$r2_y }
+  if (abs(d$r2_y - d$r3_y) > 1) { d$r3_y <- (d$r2_y + d$r3_y) / 2; d$r3_x <- d$r2_x }
+  if (abs(d$r3_x - d$r4_x) > 1 & abs(d$r3_y - d$r4_y) > 1) { 
+    d$r4_x <- (d$r3_x + d$r4_x) / 2; d$r4_y <- (d$r3_y + d$r4_y) / 2
+  }
+  if (abs(d$r3_x - d$r4_x) > 1) { d$r4_x <- (d$r3_x + d$r4_x) / 2; d$r4_y <- d$r3_y }
+  if (abs(d$r3_y - d$r4_y) > 1) { d$r4_y <- (d$r3_y + d$r4_y) / 2; d$r4_x <- d$r3_x }
+  if (abs(d$r4_x - d$r5_x) > 1 & abs(d$r4_y - d$r5_y) > 1) { 
+    d$r5_x <- (d$r4_x + d$r5_x) / 2; d$r5_y <- (d$r4_y + d$r5_y) / 2
+  }
+  if (abs(d$r4_x - d$r5_x) > 1) { d$r5_x <- (d$r4_x + d$r5_x) / 2; d$r5_y <- d$r4_y }
+  if (abs(d$r4_y - d$r5_y) > 1) { d$r5_y <- (d$r4_y + d$r5_y) / 2; d$r5_x <- d$r4_x }
+  if (abs(d$r5_x - d$r6_x) > 1 & abs(d$r5_y - d$r6_y) > 1) { 
+    d$r6_x <- (d$r5_x + d$r6_x) / 2; d$r6_y <- (d$r5_y + d$r6_y) / 2
+  }
+  if (abs(d$r5_x - d$r6_x) > 1) { d$r6_x <- (d$r5_x + d$r6_x) / 2; d$r6_y <- d$r5_y }
+  if (abs(d$r5_y - d$r6_y) > 1) { d$r6_y <- (d$r5_y + d$r6_y) / 2; d$r6_x <- d$r5_x }
+  if (abs(d$r6_x - d$r7_x) > 1 & abs(d$r6_y - d$r7_y) > 1) { 
+    d$r7_x <- (d$r6_x + d$r7_x) / 2; d$r7_y <- (d$r6_y + d$r7_y) / 2
+  }
+  if (abs(d$r6_x - d$r7_x) > 1) { d$r7_x <- (d$r6_x + d$r7_x) / 2; d$r7_y <- d$r6_y }
+  if (abs(d$r6_y - d$r7_y) > 1) { d$r7_y <- (d$r6_y + d$r7_y) / 2; d$r7_x <- d$r6_x }
+  if (abs(d$r7_x - d$r8_x) > 1 & abs(d$r7_y - d$r8_y) > 1) { 
+    d$r8_x <- (d$r7_x + d$r8_x) / 2; d$r8_y <- (d$r7_y + d$r8_y) / 2
+  }
+  if (abs(d$r7_x - d$r8_x) > 1) { d$r8_x <- (d$r7_x + d$r8_x) / 2; d$r8_y <- d$r7_y }
+  if (abs(d$r7_y - d$r8_y) > 1) { d$r8_y <- (d$r7_y + d$r8_y) / 2; d$r8_x <- d$r7_x }
+  if (abs(d$r8_x - d$r9_x) > 1 & abs(d$r8_y - d$r9_y) > 1) { 
+    d$r9_x <- (d$r8_x + d$r9_x) / 2; d$r9_y <- (d$r8_y + d$r9_y) / 2
+  }
+  if (abs(d$r8_x - d$r9_x) > 1) { d$r9_x <- (d$r8_x + d$r9_x) / 2; d$r9_y <- d$r8_y }
+  if (abs(d$r8_y - d$r9_y) > 1) { d$r9_y <- (d$r8_y + d$r9_y) / 2; d$r9_x <- d$r8_x }
+  if (abs(d$r9_x - d$r10_x) > 1 & abs(d$r9_y - d$r10_y) > 1) { 
+    d$r10_x <- (d$r9_x + d$r10_x) / 2; d$r10_y <- (d$r9_y + d$r10_y) / 2
+  }
+  if (abs(d$r9_x - d$r10_x) > 1) { d$r10_x <- (d$r9_x + d$r10_x) / 2; d$r10_y <- d$r9_y }
+  if (abs(d$r9_y - d$r10_y) > 1) { d$r10_y <- (d$r9_y + d$r10_y) / 2; d$r10_x <- d$r9_x }
+
+  df[i,2:21] <- d
+}
+
+df |> select(r2_x, r2_y) |> distinct() |> count()
+```
+
+    ## # A tibble: 1 × 1
+    ##       n
+    ##   <int>
+    ## 1  6269
+
+``` r
+df |> select(r10_x, r10_y) |> distinct() |> count()
+```
+
+    ## # A tibble: 1 × 1
+    ##       n
+    ##   <int>
+    ## 1  2557
