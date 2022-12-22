@@ -1,0 +1,108 @@
+---
+title: "Advent of Code 2022, Day 21"
+author: "Skip Perry"
+date: "December 2022"
+output: github_document
+---
+
+```{r setup, message=FALSE}
+options(dplyr.summarise.inform = FALSE)
+library(tidyverse)
+library(glue)
+```
+
+```{r}
+df <- 
+  read_lines("data/day21a.txt") |> 
+  as_tibble() |> 
+  separate(value, into = c("a", "b"), sep = ": ")
+
+df_eval <- df
+
+while(nrow(df_eval) > 0) {
+  df_numeric <- 
+    df_eval |> 
+    filter(!str_detect(b, "[a-z]")) |> 
+    rowwise() |> 
+    mutate(b = eval(parse(text = b)))
+  
+  df_eval <- 
+    df_eval |> 
+    anti_join(df_numeric, by = "a")
+  
+  for (i in 1:nrow(df_numeric)) {
+    monkey <- df_numeric$a[i]
+    monkey_value <- df_numeric$b[i]
+    
+    df_eval <- 
+      df_eval |> 
+      mutate(b = str_replace_all(b, monkey, as.character(monkey_value)))
+  }
+}
+
+format(df_numeric$b, scientific = FALSE)
+```
+
+```{r}
+df <- 
+  read_lines("data/day21a.txt") |> 
+  as_tibble() |> 
+  separate(value, into = c("a", "b"), sep = ": ") |> 
+  filter(a != "humn") |> 
+  mutate(b = if_else(a == "root", str_replace(b, "\\+", "\\="), b))
+
+df
+df_eval <- df
+df_numeric_tmp <- 
+  df_eval |> 
+  filter(!str_detect(b, "[a-z]"), !(a == "humn")) 
+df_eval
+df_numeric_tmp
+```
+
+```{r}
+while (nrow(df_numeric_tmp) > 0L) {
+  df_numeric_tmp <- 
+    df_eval |> 
+    filter(!str_detect(b, "[a-z]"), !(a == "humn"))
+  
+  if (nrow(df_numeric_tmp) == 0L) { break }
+  
+  df_numeric <- 
+    df_numeric_tmp |> 
+    rowwise() |> 
+    mutate(b = eval(parse(text = b)))
+  
+  df_eval <- 
+    df_eval |> 
+    anti_join(df_numeric, by = "a")
+  
+  for (i in 1:nrow(df_numeric)) {
+    monkey <- df_numeric$a[i]
+    monkey_value <- df_numeric$b[i]
+    
+    df_eval <- 
+      df_eval |> 
+      mutate(b = str_replace_all(b, monkey, as.character(monkey_value)))
+  }
+}
+df_eval
+```
+
+```{r}
+for (i in 1:nrow(df_eval)) {
+  df_eval <- 
+    df_eval |> 
+    mutate(b = str_replace(b, df_eval$a[i], glue("({df_eval$b[i]})")))
+}
+df_eval
+```
+
+```{r}
+df_eval |> filter(a == "root") |> pull(b)
+```
+
+```{r}
+3059361893920
+```
+

@@ -1,0 +1,58 @@
+---
+title: "Advent of Code 2022, Day 13"
+author: "Skip Perry"
+date: "December 2022"
+output: github_document
+---
+
+```{r setup, message=FALSE}
+options(dplyr.summarise.inform = FALSE)
+library(tidyverse)
+```
+
+```{r}
+df_raw <- 
+  read_lines("data/day13.txt") |> 
+  as_tibble() |> 
+  filter(value != "")
+```
+
+```{r}
+df <- 
+  df_raw |> 
+  mutate(
+    rn = ceiling(row_number() / 2),
+    id = rep(c("list1", "list2"), nrow(df_raw) / 2)
+  ) |> 
+  spread(id, value) |> 
+  mutate_at(vars(list1, list2), ~ str_remove(str_remove(.x, "\\["), "\\]$"))
+
+
+t <- df$list1[4]
+
+left_brackets <- 0
+right_brackets <- 0
+for (i in 1:nchar(t)) {
+  print(str_sub(t, i, i))
+  if (str_sub(t, i, i) == "," & left_brackets == right_brackets) { break_point <- i; break }
+  if (str_sub(t, i, i) == "[") { left_brackets <- left_brackets + 1 }
+  if (str_sub(t, i, i) == "]") { right_brackets <- right_brackets + 1 }
+}
+
+break_point
+str_sub(t, 6, 6)
+```
+
+```{r}
+str_replace_all(df$list1[1], "\\d+", "\\[\\d+\\]")
+```
+
+```{r}
+df |> 
+  separate(list1, into = c("test1", "list1"), sep = ",", extra = "merge") |> 
+  separate(list2, into = c("test2", "list2"), sep = ",", extra = "merge") |> 
+  mutate_at(vars(test1, test2), ~ str_remove(.x, "\\["))
+
+?separate
+```
+
